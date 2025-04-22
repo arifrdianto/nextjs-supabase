@@ -2,17 +2,23 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Employee ID is required" },
+      { status: 400 }
+    );
+  }
 
   try {
     const { data: assessments, error } = await supabase
       .from("assessments")
       .select("*")
-      .eq("employee_id", params.id)
+      .eq("employee_id", id)
       .order("year", { ascending: false });
 
     if (error) throw error;
