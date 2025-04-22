@@ -1,11 +1,12 @@
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/app/utils/supabase/server";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
-  const id = searchParams.get("id");
-  const supabase = createRouteHandlerClient({ cookies });
+export async function GET(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const supabase = await createClient();
 
   if (!id) {
     return NextResponse.json(
@@ -42,10 +43,12 @@ export async function GET(request: Request) {
   }
 }
 
-export async function PUT(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
-  const id = searchParams.get("id");
-  const supabase = createRouteHandlerClient({ cookies });
+export async function PUT(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const supabase = await createClient();
   const body = await request.json();
 
   if (!id) {
@@ -73,10 +76,12 @@ export async function PUT(request: Request) {
   }
 }
 
-export async function DELETE(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
-  const id = searchParams.get("id");
-  const supabase = createRouteHandlerClient({ cookies });
+export async function DELETE(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const supabase = await createClient();
 
   if (!id) {
     return NextResponse.json(
