@@ -31,17 +31,14 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: Request) {
   const supabase = createRouteHandlerClient({ cookies });
   const body = await request.json();
 
   try {
     const { data, error } = await supabase
       .from("assessments")
-      .insert([{ ...body, employee_id: params.id }])
+      .insert([{ ...body }])
       .select()
       .single();
 

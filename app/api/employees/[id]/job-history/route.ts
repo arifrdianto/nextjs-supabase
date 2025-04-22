@@ -42,22 +42,13 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const searchParams = new URL(request.url).searchParams;
-  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
   const body = await request.json();
-
-  if (!id) {
-    return NextResponse.json(
-      { error: "Employee ID is required" },
-      { status: 400 }
-    );
-  }
 
   try {
     const { data, error } = await supabase
       .from("job_history")
-      .insert([{ ...body, employee_id: id }])
+      .insert([{ ...body }])
       .select()
       .single();
 
