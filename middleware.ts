@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { updateSession } from "./app/utils/supabase/middleware";
 
-export async function middleware(request: NextRequest) {
+export function middleware(request: NextRequest) {
   // Only apply to /api routes
   if (!request.nextUrl.pathname.startsWith("/api")) {
-    return await updateSession(request);
+    return NextResponse.next();
   }
 
   // Get the authorization header
@@ -43,7 +42,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // If credentials are valid, continue to the API route
-  return await updateSession(request);
+  return NextResponse.next();
 }
 
 // Configure the middleware to run only on /api routes
