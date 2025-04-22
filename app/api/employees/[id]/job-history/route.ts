@@ -2,11 +2,17 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Employee ID is required" },
+      { status: 400 }
+    );
+  }
 
   try {
     const { data: jobHistory, error } = await supabase
@@ -22,7 +28,7 @@ export async function GET(
         job_grade:job_grades(grade)
       `
       )
-      .eq("employee_id", params.id)
+      .eq("employee_id", id)
       .order("start_date", { ascending: false });
 
     if (error) throw error;
@@ -35,17 +41,23 @@ export async function GET(
   }
 }
 
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
   const body = await request.json();
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Employee ID is required" },
+      { status: 400 }
+    );
+  }
 
   try {
     const { data, error } = await supabase
       .from("job_history")
-      .insert([{ ...body, employee_id: params.id }])
+      .insert([{ ...body, employee_id: id }])
       .select()
       .single();
 

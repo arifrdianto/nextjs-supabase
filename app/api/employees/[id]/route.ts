@@ -2,11 +2,17 @@ import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Employee ID is required" },
+      { status: 400 }
+    );
+  }
 
   try {
     const { data: employee, error } = await supabase
@@ -23,7 +29,7 @@ export async function GET(
         job_grade:job_grades(grade)
       `
       )
-      .eq("id", params.id)
+      .eq("id", id)
       .single();
 
     if (error) throw error;
@@ -36,18 +42,24 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
   const body = await request.json();
+
+  if (!id) {
+    return NextResponse.json(
+      { error: "Employee ID is required" },
+      { status: 400 }
+    );
+  }
 
   try {
     const { data, error } = await supabase
       .from("employees")
       .update(body)
-      .eq("id", params.id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -61,17 +73,20 @@ export async function PUT(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: Request) {
+  const searchParams = new URL(request.url).searchParams;
+  const id = searchParams.get("id");
   const supabase = createRouteHandlerClient({ cookies });
 
+  if (!id) {
+    return NextResponse.json(
+      { error: "Employee ID is required" },
+      { status: 400 }
+    );
+  }
+
   try {
-    const { error } = await supabase
-      .from("employees")
-      .delete()
-      .eq("id", params.id);
+    const { error } = await supabase.from("employees").delete().eq("id", id);
 
     if (error) throw error;
 
