@@ -4,10 +4,10 @@ import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const searchParams = new URL(request.url).searchParams;
-  const id = searchParams.get("id");
+  const employee_id = searchParams.get("employee_id");
   const supabase = createRouteHandlerClient({ cookies });
 
-  if (!id) {
+  if (!employee_id) {
     return NextResponse.json(
       { error: "Employee ID is required" },
       { status: 400 }
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
         job_grade:job_grades(grade)
       `
       )
-      .eq("employee_id", id)
+      .eq("employee_id", employee_id)
       .order("start_date", { ascending: false });
 
     if (error) throw error;

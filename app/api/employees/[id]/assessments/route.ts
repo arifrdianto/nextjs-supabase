@@ -8,17 +8,14 @@ export async function GET(request: Request) {
   const supabase = createRouteHandlerClient({ cookies });
 
   if (!id) {
-    return NextResponse.json(
-      { error: "Employee ID is required" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "ID is required" }, { status: 400 });
   }
 
   try {
     const { data: assessments, error } = await supabase
       .from("assessments")
       .select("*")
-      .eq("employee_id", id)
+      .eq("id", id)
       .order("year", { ascending: false });
 
     if (error) throw error;
