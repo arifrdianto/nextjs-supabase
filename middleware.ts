@@ -2,6 +2,11 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
+  // Skip authentication for /api/auth
+  if (request.nextUrl.pathname === "/api/auth") {
+    return NextResponse.next();
+  }
+
   // Only apply to /api routes
   if (!request.nextUrl.pathname.startsWith("/api")) {
     return NextResponse.next();
@@ -47,5 +52,5 @@ export function middleware(request: NextRequest) {
 
 // Configure the middleware to run only on /api routes
 export const config = {
-  matcher: "/api/:path*",
+  matcher: ["/api/:path*"],
 };
